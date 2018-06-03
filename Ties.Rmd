@@ -57,14 +57,6 @@ This project visually describes the importance of Granovetter's 1973 paper: <i> 
 Row
 -------------------------------------
 
-### Explanation
-<center>
-As depicted below, the number of citations towards SWT has increased exponentially. Their citations increased 28 times from 1980 to 2010, meanwhile the general citations only increased XXX times. 
-</center>
-
-Row
--------------------------------------
-
 ### Graph
 
 ```{r, echo=FALSE}
@@ -86,10 +78,34 @@ ggplot(evolution, aes(x=year, y=cites))  +
     theme(legend.title = element_text(colour="black", size=8, face="bold"), 
           legend.text = element_text(colour="black", size=7.5))
 
-
-
 ```
 
+Row
+-------------------------------------
+
+### General Importance
+<left><font size=5>
+
+* From 1973 to 2018, the total number of citations to SWT is about **48500**.
+
+* Their citations per year increased 29 times from 1980 to 2010. 
+
+</font>
+</left>
+
+### Interdisciplinarity
+
+<left><font size=5>
+
+Some disciplines where it is cited:
+
+* Sociology
+* Economics
+* Internet security
+* Business
+
+</font>
+</left>
 
 
 
@@ -102,11 +118,33 @@ Row
 ### Explanation
 
 ```{r}
+authors_1973 = fread("data/authors_1973.csv")
+
+
+authors_function <- function(authors_df) {
+  
+  authors_df$citedAuthor = factor(authors_df$citedAuthor, authors_df$citedAuthor)
+  
+  ggplot(data=authors_df, aes(x=citedAuthor, y=count, fill=citedAuthor)) +
+    geom_bar(stat="identity") + blank_theme +
+    labs(title="Most important authors", x = " ", y = "Cites") +
+    theme(axis.text.x = element_text(colour="grey20",size=11,face="plain", angle = 90),
+          axis.title.y = element_text(colour="grey20",size=12,face="plain"),
+          plot.title = element_text(hjust = 0.5, size = 16), 
+          legend.position="none")
+}
+
+
+authors_function(authors_1973)
 ```
  
 ### Cites
     
 ```{r}
+
+
+
+
 ``` 
 
 Row
