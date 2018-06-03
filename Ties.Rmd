@@ -1,0 +1,123 @@
+---
+title: "The Ties of SWT"
+author: "Rodrigo Valdes Ortiz"
+date: "6/1/2018"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    theme: cerulean
+---
+
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+
+require("knitr")
+opts_knit$set(root.dir = "/Users/ruy/Documents/UChicago/spring2018/data_viz/final_repo")
+
+library(sp)
+library(htmltools)
+library(RColorBrewer)
+library(data.table)
+library(ggplot2)
+library(ggpubr)
+
+options(digits = 3)
+set.seed(1234567)
+```
+
+
+```{r echo=FALSE}
+# Main theme
+blank_theme <- theme_minimal()+
+  theme(
+  panel.border = element_blank(),
+  panel.grid=element_blank(),
+  axis.ticks = element_blank(),
+  plot.title=element_text(size=14, face="bold")
+  )
+```
+
+1. The Strength of Weak Ties
+===
+
+<p align=justify><font size=6>
+
+This project visually describes the importance of Granovetter's 1973 paper: <i> The Strength of Weak Ties </i> , one of the most relevant papers in the social sciences in the last fifty years. I analyze this influence of this paper in three different time spans: 1973 - 1980, 1990 - 1997, and 2007 - 2014.
+
+</font></p>
+
+<div align=center>
+![Mark Granovetter](images/Granovetter.jpg){height="400px"}
+</div>
+
+2. Quatifying the relevance of SWT
+===
+
+Row
+-------------------------------------
+
+### Explanation
+<center>
+As depicted below, the number of citations towards SWT has increased exponentially. Their citations increased 28 times from 1980 to 2010, meanwhile the general citations only increased XXX times. 
+</center>
+
+Row
+-------------------------------------
+
+### Graph
+
+```{r, echo=FALSE}
+evolution = fread("data/evolution.csv")
+
+# Generate the plot
+ggplot(evolution, aes(x=year, y=cites))  + 
+    geom_bar(aes(y=cites, colour = "A"), stat="identity", fill="steelblue4", colour="steelblue4") +
+    blank_theme +
+    labs(title="SWT's citations", x = " ", y = " ", colour = "Variables") +
+    scale_x_continuous(breaks=c(1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015)) +
+    geom_smooth(method = "auto", se = FALSE, colour = "indianred1", aes(colour="B")) +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    theme(axis.text.x = element_text(colour="grey20",size=12,face="bold", angle = 90),
+          axis.text.y = element_text(colour="grey20",size=12,face="plain"),
+          axis.title.x = element_text(colour="grey20",size=11,face="bold"),
+          axis.title.y = element_text(colour="grey20",size=11,face="bold"),
+          plot.title = element_text(hjust = 0.5, size = 16)) +
+    theme(legend.title = element_text(colour="black", size=8, face="bold"), 
+          legend.text = element_text(colour="black", size=7.5))
+
+
+
+```
+
+
+
+
+3. 1973 - 1980
+===
+
+Row
+-------------------------------------
+    
+### Explanation
+
+```{r}
+```
+ 
+### Cites
+    
+```{r}
+``` 
+
+Row
+-------------------------------------
+    
+### Word Clouds
+    
+```{r}
+```
+    
+### Journals
+
+```{r}
+```
