@@ -6,6 +6,7 @@ output:
   flexdashboard::flex_dashboard:
     orientation: rows
     theme: cerulean
+runtime: shiny
 ---
 
 
@@ -167,7 +168,7 @@ evolution = fread("data/evolution.csv")
 ggplot(evolution, aes(x=year, y=cites))  + 
     geom_bar(aes(y=cites, colour = "A"), stat="identity", fill="steelblue4", colour="steelblue4") +
     blank_theme +
-    labs(title="Yearly citations to SWT", x = " ", y = " ", colour = "Variables") +
+    labs(title="Citations to SWT", x = " ", y = " ", colour = "Variables") +
     scale_x_continuous(breaks=c(1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015)) +
     geom_smooth(method = "auto", se = FALSE, colour = "indianred1", aes(colour="B")) +
     theme(plot.title = element_text(hjust = 0.5)) +
@@ -180,6 +181,31 @@ ggplot(evolution, aes(x=year, y=cites))  +
           legend.text = element_text(colour="black", size=7.5))
 
 ```
+
+### Comparison
+
+```{r, echo = FALSE}
+trends = fread("data/trends.csv")
+
+ggplot()  + 
+    geom_line(data=trends, aes(x=year, y=trend_g, colour="steelblue4"), size = 1) +
+    geom_line(data=trends, aes(x=year, y=trend_swt, colour="red"), size = 1) + 
+    blank_theme + 
+    labs(title="Citations in SWT vs general science", x = " ", y = "Index (1985 = 1)", colour = "Variables", caption = "Note: the first data available is 1985") +
+    scale_x_continuous(breaks=c(1985, 1990, 1995, 2000, 2005, 2010, 2015)) +
+    scale_color_discrete(name = " ", labels = c("SWT", "All Science")) +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    theme(axis.text.x = element_text(colour="grey20",size=12,face="bold", angle = 90),
+          axis.text.y = element_text(colour="grey20",size=12,face="plain"),
+          axis.title.x = element_text(colour="grey20",size=11,face="bold"),
+          axis.title.y = element_text(colour="grey20",size=11,face="bold"),
+          plot.title = element_text(hjust = 0.5, size = 16)) +
+    theme(legend.title = element_text(colour="black", size=8, face="bold"), 
+          legend.text = element_text(colour="black", size=9)) +
+    theme(legend.position="bottom") +
+    theme(plot.caption = element_text(hjust = 0, size = 8))
+```
+
 
 Row
 -------------------------------------
@@ -220,7 +246,12 @@ Row
 <left>
 <font size=6>
 
-All those are very beatiful graphs.
+* SWT started to grow in its citations numbers since it was a new paper.
+
+* The most important authors are Laumann, Burt, and White.
+
+* The topics include social theory, analysis, and structure.
+
 
 </font>
 </left>
@@ -229,7 +260,7 @@ All those are very beatiful graphs.
 ### Cites
     
 ```{r echo=FALSE}
-plot_cites(2007, 2014, evolution)
+plot_cites(1973, 1980, evolution)
 ``` 
 
 Row
@@ -262,7 +293,11 @@ Row
 <left>
 <font size=6>
 
-All those are very beatiful graphs.
+* The number of citations continue to work.
+
+* The lead authors are Burt, Wellman, and Marsden.
+
+* Some relevant topic include social support and structure, groups, and community.
 
 </font>
 </left>
@@ -303,7 +338,11 @@ Row
 <left>
 <font size=6>
 
-All those are very beatiful graphs.
+* The number of citations growth steadily after 45 years.
+
+* Lead authors: Burt, Uzzi, and Putnam.
+
+* Adding business words: social capital, innovation, performance.
 
 </font>
 </left>
@@ -332,8 +371,4 @@ authors_2007 = fread("data/authors_2007.csv")
 
 authors_function(authors_2007)
 ```
-
-
-
-
 
