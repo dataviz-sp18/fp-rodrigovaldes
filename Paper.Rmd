@@ -1,0 +1,58 @@
+---
+title: "Final Project - Data Viz"
+author: "Rodrigo Valdes Ortiz"
+date: "6/4/2018"
+header-includes:
+   - \usepackage{setspace}
+   - \doublespacing
+output: pdf_document
+---
+
+
+# Introduction
+
+Network analysis has emerged as one of the main methodologies to analyze politics, social behaviors, and markets. Mark Granovetter was one of the pioneers in this discipline, his article *The Strength of Weak Ties* (SWT) (1973) was groundbreaking for network analysis and social sciences in general. In this paper, Granovetter was revolutionary because he linked two dissociated concepts at that time, macro-level and micro-level interactions. Granovetter’s paper inspired social scientists to analyze diverse topics, such as political regimes, friendships, and stock markets. In the same vein, physicians and mathematicians were inspired to research to create algorithms and computational methodologies to understand interactions among network members – individuals, disciplines, papers–. 
+
+Although most of the social scientists who have read Granovetter's work are aware of the relevance of its 1973 paper, a systematic study about of its influence has not been done, to the best knowledge of the author of this article. In this project, I visually explore the impact of SWT regarding three different factors: number of citations, related authors, and topics associated with papers which cite SWT.
+
+# Methods
+
+## Word Clouds
+
+I use word clouds to show the most important concepts used in titles of papers which cite SWT. I remove English stop words, "network", "networks", and "social." Those worlds dominate all the cloud if I do not exclude them. Overall, the word clouds provide insights on the most important topics per time span.  
+
+## Bar and Line Graphs
+
+On the second tab regarding quatifyin the relevance of SWT, I use a bar graph to depict the exponentially increasing number of citations. However, before deciding the final design, I tried a line graph and a bar graph. The line graph can be distracting because it shows small changes evidently, which are not important to the main point: the number of citations has increased exponentially in the last 45 years. In the same vein, the line graph on the rigth illustrates how SWT is a paper who deserves attention. 
+
+On the examples per time span, I utilize a bar graph with diverse colors to show the most important authors who are cited in the same papers where they cite SWT. I use a different color by author to emphasize that information in each bar is not directly associated with each other. However, to show the total number of cites per year, I use bars of the same color to show that the only difference between the bars is the time. 
+
+# Discussion
+
+## What has the audience learned from your work? 
+
+First, users learn that Granovetter's paper (1973) have received wide attention in the last four decades. Also, the number of citations associated with this paper has increased exponentially, which is explained by two components: (1) the general trend in science to increase the size of articles and citations per year, (2) special features regarding the content of SWT that make it unique. 
+
+Second, the main topics in the articles who cite SWT have evolved in the last 45 years. For instance, for 1973 - 1980, the wordcloud shows how scientists were building a theory about social networks, community, and social structure. In the same vein, for 1990 - 1997, similar topics are still prevailing, such as social structure, community, and theory. However, new topics are added, like social support, social capital, and groups. Finally, for 2007-2014, the word cloud shows the dominance of business and management concepts, such as social capital, innovation, and performance. This agrees with a deeper study of the issue (Valdes Ortiz, 2018).
+
+# How is the visualization truthful, functional, beautiful, insightful, and/or enlightening?
+
+## Truthful
+
+All visualizations were designed to reduce bias and show the information in the most reliable way. For instance, graphs have an origin of zero and colors were chosen to create contrast when necessary. Also, I added a graph which compares the general trend in science vs SWT. This avoids the criticism that the number of citations in SWT might growth as the general number of citations.
+
+## Functional
+
+This visualization environment shows information several times faster against using only text. Also, the dashboard helps to tell a story step by step.
+
+## Beautiful
+
+The colors make a delicious combination which invites the reader to analyze the information. Also, I was cautious about only adding the necessary information to show the main trends in the data. The combination of few text and beautiful graphs creates an easy-to-read product.
+
+## Insightful
+
+This dashboard gives several insights about the data. For instance, readers can learn that the number of citations associated with SWT has grown exponentially and above the general trend in science. Also, the topics among the different time spans are different, which is possible to deduct from the word clouds. Also, users realize about the most important authors in each time span.
+
+## Enlightening
+
+The most important non-evident hypothesis that users can formulate looking at this graphs is why SWT has been successful. The dashboard provides information to generate some insights. For example, was the introduction of management issues after 2007 related to the success of SWT? Why was Ronald Burt the main scientist after Granovetter in this cluster of science? 
