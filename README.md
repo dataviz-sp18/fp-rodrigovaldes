@@ -2,7 +2,7 @@
 
 Thank for visiting this repo!
 
-# How to visualize the final product
+# How to visualize the final product?
 
 Please clone the repository in your computer and open Ties.html
 
