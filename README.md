@@ -8,7 +8,7 @@ Although most of the social scientists who have read Granovetter's work are awar
 
 # How to visualize the final product?
 
-Please clone the repository in your computer and open Ties.html
+Please clone the repository in your computer and open Ties.html (the shiny server have some issues that I was not able to solve for the moment –after many many hours of trying–. Sorry for the hassle).
 
 Unfortunately, the data used here is proprietary. Then, please contact me if you run into reproducibility issues.
 
