@@ -6,7 +6,6 @@ output:
   flexdashboard::flex_dashboard:
     orientation: rows
     theme: cerulean
-runtime: shiny
 ---
 
 

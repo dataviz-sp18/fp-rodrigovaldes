@@ -2,6 +2,10 @@
 
 Thank for visiting this repo!
 
+# How to visualize the final product
+
+Please clone the repository in your computer and open Ties.html
+
 Unfortunately, the data used here is proprietary. Then, please contact me if you run into reproducibility issues.
 
 ## Content of the files:
