@@ -22,6 +22,12 @@ library(data.table)
 library(ggplot2)
 library(ggpubr)
 
+# For wordclouds
+library("tm")
+library("SnowballC")
+library("wordcloud")
+library("RColorBrewer")
+
 options(digits = 3)
 set.seed(1234567)
 ```
@@ -38,12 +44,107 @@ blank_theme <- theme_minimal()+
   )
 ```
 
+
+```{r echo=FALSE}
+# Wordclouds function
+
+wordclouds_f <- function(filepath) {
+  # A lot of code and ideas from
+  # http://www.sthda.com/english/wiki/text-mining-and-word-cloud-fundamentals-in-r-5-simple-steps-you-should-know
+  
+  # Load the text
+  text <- readLines(filePath)
+  
+  # Load the data as a corpus
+  docs <- Corpus(VectorSource(text))
+  
+  # Remove some garbage
+  toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
+  docs <- tm_map(docs, toSpace, "/")
+  docs <- tm_map(docs, toSpace, "@")
+  docs <- tm_map(docs, toSpace, "\\|")
+  
+  # Remove numbers
+  docs <- tm_map(docs, removeNumbers)
+  # Remove english common stopwords
+  docs <- tm_map(docs, removeWords, stopwords("english"))
+  # Remove specific stop words
+  docs <- tm_map(docs, removeWords, c("network", "networks", "social"))
+  # Remove punctuations
+  docs <- tm_map(docs, removePunctuation)
+  # Eliminate extra white spaces
+  docs <- tm_map(docs, stripWhitespace)
+  # Text stemming
+  # docs <- tm_map(docs, stemDocument)
+  
+  dtm <- TermDocumentMatrix(docs)
+  m <- as.matrix(dtm)
+  v <- sort(rowSums(m),decreasing=TRUE)
+  d <- data.frame(word = names(v),freq=v)
+  
+  set.seed(222)
+  wordcloud(words = d$word, freq = d$freq, min.freq = 1,
+            max.words=100, random.order=FALSE, rot.per=0.35, 
+            colors=brewer.pal(8, "Dark2"))
+  
+}
+```
+
+```{r echo=FALSE}
+# Bar graph to depict the number of cites per year
+
+plot_cites = function(year_0, year_end, evolution) {
+  
+  cites_subset = subset(evolution, year>(year_0-1) & year<(year_end+1))
+
+  ggplot(cites_subset, aes(x=year, y=cites))  + 
+      geom_bar(aes(y=cites, colour = "A"), stat="identity", fill="deepskyblue4", colour="deepskyblue4") +
+      blank_theme +
+      scale_x_continuous(breaks=cites_subset$year) + 
+      labs(title="Papers which cite SWT", x = " ", y = " ", colour = "Variables") +
+      geom_smooth(method = "lm", se = FALSE, colour = "indianred1", aes(colour="B")) +
+      theme(plot.title = element_text(hjust = 0.5)) +
+      theme(axis.text.x = element_text(colour="grey20",size=12,face="bold", angle = 90),
+            axis.text.y = element_text(colour="grey20",size=12,face="plain"),
+            axis.title.x = element_text(colour="grey20",size=11,face="bold"),
+            axis.title.y = element_text(colour="grey20",size=11,face="bold"),
+            plot.title = element_text(hjust = 0.5, size = 16)) +
+      theme(legend.title = element_text(colour="black", size=8, face="bold"), 
+            legend.text = element_text(colour="black", size=7.5))
+  
+}
+```
+
+```{r echo=FALSE}
+# Defines a fucntion to show the top authors in a time span
+authors_function <- function(authors_df) {
+  
+  authors_df$citedAuthor = factor(authors_df$citedAuthor, authors_df$citedAuthor)
+  
+  ggplot(data=authors_df, aes(x=citedAuthor, y=count, fill=citedAuthor)) +
+    geom_bar(stat="identity") + blank_theme +
+    labs(title="Authors cited in papers where they cite SWT", x = " ", y = "Cites") +
+    theme(axis.text.x = element_text(colour="grey20",size=11,face="plain", angle = 90),
+          axis.title.y = element_text(colour="grey20",size=12,face="plain"),
+          plot.title = element_text(hjust = 0.5, size = 16), 
+          legend.position="none")
+}
+```
+
+
 1. The Strength of Weak Ties
 ===
 
+<p align=center><font size=8>
+
+<b> The Ties of <i> The Strength of Weak Ties </i> </b>
+
+</font>
+
+
 <p align=justify><font size=6>
 
-This project visually describes the importance of Granovetter's 1973 paper: <i> The Strength of Weak Ties </i> , one of the most relevant papers in the social sciences in the last fifty years. I analyze this influence of this paper in three different time spans: 1973 - 1980, 1990 - 1997, and 2007 - 2014.
+This project visually describes the importance of Granovetter's 1973 paper: <i> The Strength of Weak Ties</i> (SWT), one of the most cited papers in the social sciences in the last fifty years. I visually describe features related to the influence of this paper during three different time spans: 1973 - 1980, 1990 - 1997, and 2007 - 2014.
 
 </font></p>
 
@@ -66,7 +167,7 @@ evolution = fread("data/evolution.csv")
 ggplot(evolution, aes(x=year, y=cites))  + 
     geom_bar(aes(y=cites, colour = "A"), stat="identity", fill="steelblue4", colour="steelblue4") +
     blank_theme +
-    labs(title="SWT's citations", x = " ", y = " ", colour = "Variables") +
+    labs(title="Yearly citations to SWT", x = " ", y = " ", colour = "Variables") +
     scale_x_continuous(breaks=c(1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015)) +
     geom_smooth(method = "auto", se = FALSE, colour = "indianred1", aes(colour="B")) +
     theme(plot.title = element_text(hjust = 0.5)) +
@@ -108,7 +209,6 @@ Some disciplines where it is cited:
 </left>
 
 
-
 3. 1973 - 1980
 ===
 
@@ -117,34 +217,19 @@ Row
     
 ### Explanation
 
-```{r}
-authors_1973 = fread("data/authors_1973.csv")
+<left>
+<font size=6>
+
+All those are very beatiful graphs.
+
+</font>
+</left>
 
 
-authors_function <- function(authors_df) {
-  
-  authors_df$citedAuthor = factor(authors_df$citedAuthor, authors_df$citedAuthor)
-  
-  ggplot(data=authors_df, aes(x=citedAuthor, y=count, fill=citedAuthor)) +
-    geom_bar(stat="identity") + blank_theme +
-    labs(title="Most important authors", x = " ", y = "Cites") +
-    theme(axis.text.x = element_text(colour="grey20",size=11,face="plain", angle = 90),
-          axis.title.y = element_text(colour="grey20",size=12,face="plain"),
-          plot.title = element_text(hjust = 0.5, size = 16), 
-          legend.position="none")
-}
-
-
-authors_function(authors_1973)
-```
- 
 ### Cites
     
-```{r}
-
-
-
-
+```{r echo=FALSE}
+plot_cites(2007, 2014, evolution)
 ``` 
 
 Row
@@ -152,10 +237,103 @@ Row
     
 ### Word Clouds
     
-```{r}
+```{r echo=FALSE}
+filePath <- "data/titles_1973.txt"
+wordclouds_f(filePath)
 ```
     
-### Journals
+### Authors
 
-```{r}
+```{r echo=FALSE}
+authors_1973 = fread("data/authors_1973.csv")
+
+authors_function(authors_1973)
 ```
+
+
+4. 1990 - 1997
+===
+
+Row
+-------------------------------------
+    
+### Explanation
+
+<left>
+<font size=6>
+
+All those are very beatiful graphs.
+
+</font>
+</left>
+
+
+### Cites
+    
+```{r echo=FALSE}
+plot_cites(1990, 1997, evolution)
+``` 
+
+Row
+-------------------------------------
+    
+### Word Clouds
+    
+```{r echo=FALSE}
+filePath <- "data/titles_1990.txt"
+wordclouds_f(filePath)
+```
+    
+### Authors
+
+```{r echo=FALSE}
+authors_1990 = fread("data/authors_1990.csv")
+
+authors_function(authors_1990)
+```
+
+5. 2007 - 2014
+===
+
+Row
+-------------------------------------
+    
+### Explanation
+
+<left>
+<font size=6>
+
+All those are very beatiful graphs.
+
+</font>
+</left>
+
+
+### Cites
+    
+```{r echo=FALSE}
+plot_cites(2007, 2014, evolution)
+``` 
+
+Row
+-------------------------------------
+    
+### Word Clouds
+    
+```{r echo=FALSE}
+filePath <- "data/titles_2007.txt"
+wordclouds_f(filePath)
+```
+    
+### Authors
+
+```{r echo=FALSE}
+authors_2007 = fread("data/authors_2007.csv")
+
+authors_function(authors_2007)
+```
+
+
+
+
+
