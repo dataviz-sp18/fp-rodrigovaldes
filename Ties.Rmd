@@ -244,7 +244,7 @@ Row
 ### Explanation
 
 <left>
-<font size=6>
+<font size=5>
 
 * SWT started to grow in its citations numbers since it was a new paper.
 
@@ -291,7 +291,7 @@ Row
 ### Explanation
 
 <left>
-<font size=6>
+<font size=5>
 
 * The number of citations continue to work.
 
@@ -336,7 +336,7 @@ Row
 ### Explanation
 
 <left>
-<font size=6>
+<font size=5>
 
 * The number of citations growth steadily after 45 years.
 
