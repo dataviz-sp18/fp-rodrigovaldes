@@ -13,10 +13,12 @@ runtime: shiny
 ```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
 
-require("knitr")
-opts_knit$set(root.dir = "/Users/ruy/Documents/UChicago/spring2018/data_viz/final_repo")
+# require("knitr")
+# opts_knit$set(root.dir = "/Users/ruy/Documents/UChicago/spring2018/data_viz/final_repo")
+# setwd("/Users/ruy/Documents/UChicago/spring2018/data_viz/final_repo/")
 
 library(sp)
+library(shiny)
 library(htmltools)
 library(RColorBrewer)
 library(data.table)
@@ -24,9 +26,9 @@ library(ggplot2)
 library(ggpubr)
 
 # For wordclouds
+library("wordcloud")
 library("tm")
 library("SnowballC")
-library("wordcloud")
 library("RColorBrewer")
 
 options(digits = 3)
@@ -47,14 +49,53 @@ blank_theme <- theme_minimal()+
 
 
 ```{r echo=FALSE}
-# Wordclouds function
+# Bar graph to depict the number of cites per year
 
+plot_cites <- function(year_0, year_end, evolution) {
+
+  cites_subset = subset(evolution, year>(year_0-1) & year<(year_end+1))
+
+  ggplot(cites_subset, aes(x=year, y=cites))  +
+      geom_bar(aes(y=cites, colour = "A"), stat="identity", fill="deepskyblue4", colour="deepskyblue4") +
+      blank_theme +
+      scale_x_continuous(breaks=cites_subset$year) +
+      labs(title="Papers which cite SWT", x = " ", y = " ", colour = "Variables") +
+      geom_smooth(method = "lm", se = FALSE, colour = "indianred1", aes(colour="B")) +
+      theme(plot.title = element_text(hjust = 0.5)) +
+      theme(axis.text.x = element_text(colour="grey20",size=12,face="bold", angle = 90),
+            axis.text.y = element_text(colour="grey20",size=12,face="plain"),
+            axis.title.x = element_text(colour="grey20",size=11,face="bold"),
+            axis.title.y = element_text(colour="grey20",size=11,face="bold"),
+            plot.title = element_text(hjust = 0.5, size = 16)) +
+      theme(legend.title = element_text(colour="black", size=8, face="bold"),
+            legend.text = element_text(colour="black", size=7.5))
+
+}
+```
+
+```{r echo=FALSE}
+# Defines a fucntion to show the top authors in a time span
+authors_function <- function(authors_df) {
+
+  authors_df$citedAuthor = factor(authors_df$citedAuthor, authors_df$citedAuthor)
+
+  ggplot(data=authors_df, aes(x=citedAuthor, y=count, fill=citedAuthor)) +
+    geom_bar(stat="identity") + blank_theme +
+    labs(title="Authors cited in papers where they cite SWT", x = " ", y = "Cites") +
+    theme(axis.text.x = element_text(colour="grey20",size=11,face="plain", angle = 90),
+          axis.title.y = element_text(colour="grey20",size=12,face="plain"),
+          plot.title = element_text(hjust = 0.5, size = 16),
+          legend.position="none")
+}
+```
+
+```{r echo = FALSE}
 wordclouds_f <- function(filepath) {
   # A lot of code and ideas from
   # http://www.sthda.com/english/wiki/text-mining-and-word-cloud-fundamentals-in-r-5-simple-steps-you-should-know
   
   # Load the text
-  text <- readLines(filePath)
+  text <- readLines(filepath)
   
   # Load the data as a corpus
   docs <- Corpus(VectorSource(text))
@@ -91,47 +132,6 @@ wordclouds_f <- function(filepath) {
 }
 ```
 
-```{r echo=FALSE}
-# Bar graph to depict the number of cites per year
-
-plot_cites = function(year_0, year_end, evolution) {
-  
-  cites_subset = subset(evolution, year>(year_0-1) & year<(year_end+1))
-
-  ggplot(cites_subset, aes(x=year, y=cites))  + 
-      geom_bar(aes(y=cites, colour = "A"), stat="identity", fill="deepskyblue4", colour="deepskyblue4") +
-      blank_theme +
-      scale_x_continuous(breaks=cites_subset$year) + 
-      labs(title="Papers which cite SWT", x = " ", y = " ", colour = "Variables") +
-      geom_smooth(method = "lm", se = FALSE, colour = "indianred1", aes(colour="B")) +
-      theme(plot.title = element_text(hjust = 0.5)) +
-      theme(axis.text.x = element_text(colour="grey20",size=12,face="bold", angle = 90),
-            axis.text.y = element_text(colour="grey20",size=12,face="plain"),
-            axis.title.x = element_text(colour="grey20",size=11,face="bold"),
-            axis.title.y = element_text(colour="grey20",size=11,face="bold"),
-            plot.title = element_text(hjust = 0.5, size = 16)) +
-      theme(legend.title = element_text(colour="black", size=8, face="bold"), 
-            legend.text = element_text(colour="black", size=7.5))
-  
-}
-```
-
-```{r echo=FALSE}
-# Defines a fucntion to show the top authors in a time span
-authors_function <- function(authors_df) {
-  
-  authors_df$citedAuthor = factor(authors_df$citedAuthor, authors_df$citedAuthor)
-  
-  ggplot(data=authors_df, aes(x=citedAuthor, y=count, fill=citedAuthor)) +
-    geom_bar(stat="identity") + blank_theme +
-    labs(title="Authors cited in papers where they cite SWT", x = " ", y = "Cites") +
-    theme(axis.text.x = element_text(colour="grey20",size=11,face="plain", angle = 90),
-          axis.title.y = element_text(colour="grey20",size=12,face="plain"),
-          plot.title = element_text(hjust = 0.5, size = 16), 
-          legend.position="none")
-}
-```
-
 
 1. The Strength of Weak Ties
 ===
@@ -162,10 +162,10 @@ Row
 ### Graph
 
 ```{r, echo=FALSE}
-evolution = fread("data/evolution.csv")
+evolution <- fread("data/evolution.csv")
 
 # Generate the plot
-ggplot(evolution, aes(x=year, y=cites))  + 
+ggplot(evolution, aes(x=year, y=cites))  +
     geom_bar(aes(y=cites, colour = "A"), stat="identity", fill="steelblue4", colour="steelblue4") +
     blank_theme +
     labs(title="Citations to SWT", x = " ", y = " ", colour = "Variables") +
@@ -177,7 +177,7 @@ ggplot(evolution, aes(x=year, y=cites))  +
           axis.title.x = element_text(colour="grey20",size=11,face="bold"),
           axis.title.y = element_text(colour="grey20",size=11,face="bold"),
           plot.title = element_text(hjust = 0.5, size = 16)) +
-    theme(legend.title = element_text(colour="black", size=8, face="bold"), 
+    theme(legend.title = element_text(colour="black", size=8, face="bold"),
           legend.text = element_text(colour="black", size=7.5))
 
 ```
@@ -185,13 +185,13 @@ ggplot(evolution, aes(x=year, y=cites))  +
 ### Comparison
 
 ```{r, echo = FALSE}
-trends = fread("data/trends.csv")
+trends <- fread("data/trends.csv")
 
-ggplot()  + 
+ggplot()  +
     geom_line(data=trends, aes(x=year, y=trend_g, colour="steelblue4"), size = 1) +
-    geom_line(data=trends, aes(x=year, y=trend_swt, colour="red"), size = 1) + 
-    blank_theme + 
-    labs(title="Citations in SWT vs general science", x = " ", y = "Index (1985 = 1)", colour = "Variables", caption = "Note: the first data available is 1985") +
+    geom_line(data=trends, aes(x=year, y=trend_swt, colour="red"), size = 1) +
+    blank_theme +
+    labs(title="Citations in SWT vs general science", x = " ", y = "Index (1985 = 1)", colour =  "Variables", caption = "Note: the first data available is 1985") +
     scale_x_continuous(breaks=c(1985, 1990, 1995, 2000, 2005, 2010, 2015)) +
     scale_color_discrete(name = " ", labels = c("SWT", "All Science")) +
     theme(plot.title = element_text(hjust = 0.5)) +
@@ -200,7 +200,7 @@ ggplot()  +
           axis.title.x = element_text(colour="grey20",size=11,face="bold"),
           axis.title.y = element_text(colour="grey20",size=11,face="bold"),
           plot.title = element_text(hjust = 0.5, size = 16)) +
-    theme(legend.title = element_text(colour="black", size=8, face="bold"), 
+    theme(legend.title = element_text(colour="black", size=8, face="bold"),
           legend.text = element_text(colour="black", size=9)) +
     theme(legend.position="bottom") +
     theme(plot.caption = element_text(hjust = 0, size = 8))
@@ -269,14 +269,14 @@ Row
 ### Word Clouds
     
 ```{r echo=FALSE}
-filePath <- "data/titles_1973.txt"
-wordclouds_f(filePath)
+filePath_73 <- "data/titles_1973.txt"
+wordclouds_f(filePath_73)
 ```
     
 ### Authors
 
 ```{r echo=FALSE}
-authors_1973 = fread("data/authors_1973.csv")
+authors_1973 <- fread("data/authors_1973.csv")
 
 authors_function(authors_1973)
 ```
@@ -315,14 +315,14 @@ Row
 ### Word Clouds
     
 ```{r echo=FALSE}
-filePath <- "data/titles_1990.txt"
-wordclouds_f(filePath)
+filePath_90 <- "data/titles_1990.txt"
+wordclouds_f(filePath_90)
 ```
     
 ### Authors
 
 ```{r echo=FALSE}
-authors_1990 = fread("data/authors_1990.csv")
+authors_1990 <- fread("data/authors_1990.csv")
 
 authors_function(authors_1990)
 ```
@@ -360,14 +360,14 @@ Row
 ### Word Clouds
     
 ```{r echo=FALSE}
-filePath <- "data/titles_2007.txt"
-wordclouds_f(filePath)
+filePath_07 <- "data/titles_2007.txt"
+wordclouds_f(filePath_07)
 ```
     
 ### Authors
 
 ```{r echo=FALSE}
-authors_2007 = fread("data/authors_2007.csv")
+authors_2007 <- fread("data/authors_2007.csv")
 
 authors_function(authors_2007)
 ```
