@@ -22,7 +22,7 @@ Ties.Rmd is the code where in set up the flex dashboard.
 
 Paper.pdf is the final report.
 
-## The packages you need to run the main R code are (Ties.Rmd):
+## The packages you need to run the main R code (Ties.Rmd) are:
 
 ### Graphs and data management
 
